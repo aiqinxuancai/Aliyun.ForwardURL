@@ -70,7 +70,7 @@ Aliyun.ForwardURL::Aliyun.ForwardURL.HttpHandler::HandleRequest
     
 3.  COS_BUCKETNAME （对象存储Bucket名称）
     
-4.  COS_ENDPOINT （对象存储Bucket的Endpoint，例：[https://oss-cn-hangzhou.aliyuncs.com](https://oss-cn-hangzhou.aliyuncs.com/)）
+4.  COS_ENDPOINT （对象存储Bucket的Endpoint，前面拼上https:// ，例：[https://oss-cn-hangzhou.aliyuncs.com](https://oss-cn-hangzhou.aliyuncs.com/)）
     
 5.  TARGET_URL （你的订阅地址）
     
