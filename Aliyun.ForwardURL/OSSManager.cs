@@ -54,8 +54,6 @@ namespace Aliyun.ForwardURL
         //
         public static void SaveConfig(string fileName, string fileContent)
         {
-            //涨跌幅每10分钟
-            //价格固定推送
             HttpHandler.FcContext.Logger.LogInformation($"开始存储配置{fileName}...");
             var objectName = fileName.Replace(@"/", "_");
 
