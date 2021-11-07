@@ -68,9 +68,9 @@ Aliyun.ForwardURL::Aliyun.ForwardURL.HttpHandler::HandleRequest
     
 2.  COS_ACCESSSECRET（AccessSecret，上面的步骤有获取方法）
     
-3.  COS_BUCKETNAME （对象存储OSS存储桶名字）
+3.  COS_BUCKETNAME （对象存储Bucket名称）
     
-4.  COS_ENDPOINT （对象存储OSS存储桶Endpoint，例：[https://oss-cn-hangzhou.aliyuncs.com](https://oss-cn-hangzhou.aliyuncs.com/)）
+4.  COS_ENDPOINT （对象存储Bucket的Endpoint，例：[https://oss-cn-hangzhou.aliyuncs.com](https://oss-cn-hangzhou.aliyuncs.com/)）
     
 5.  TARGET_URL （你的订阅地址）
     
