@@ -40,7 +40,7 @@ namespace Aliyun.ForwardURL
             }
             string targetUrl = Environment.GetEnvironmentVariable(targetName);
 
-            if (!string.IsNullOrWhiteSpace(targetUrl))
+            if (string.IsNullOrWhiteSpace(targetUrl))
             {
                 fcContext.Logger.LogInformation($"未配置订阅地址（{targetName}），请在环境变量中配置");
             }
