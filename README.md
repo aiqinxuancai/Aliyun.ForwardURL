@@ -89,4 +89,4 @@ Aliyun.ForwardURL::Aliyun.ForwardURL.HttpHandler::HandleRequest
 
 ![](https://pic2.zhimg.com/80/v2-a03960f98b3db988ac6cb6d100664bd1_720w.png)
 
-上图中请求地址就是你的的转发订阅地址，如读取失败则返回OSS上次缓存的订阅。
+上图中请求地址就是你的的转发订阅地址，在路由器插件或其他客户端中替换为此订阅地址即可。
