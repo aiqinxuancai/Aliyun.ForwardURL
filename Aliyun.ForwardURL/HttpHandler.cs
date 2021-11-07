@@ -11,7 +11,7 @@ using Flurl.Http;
 using Flurl;
 
 
-namespace Maying
+namespace Aliyun.ForwardURL
 {
     public class HttpHandler : FcHttpEntrypoint
     {
