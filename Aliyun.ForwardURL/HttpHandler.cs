@@ -33,7 +33,8 @@ namespace Aliyun.ForwardURL
 
             string targetName = "TARGET_URL";
 
-            //使用CDN的话，会导致relativePath无法获取
+
+            //这里支持使用在URL后增加/***/***的方法来配置多个URL，环境变量里只需配置对应的TARGET_URL_***_*** (使用CDN的话，似乎会导致relativePath无法获取)
             if (relativePath != "/" && !string.IsNullOrWhiteSpace(relativePath))
             {
                 targetName = $"TARGET_URL{relativePath.Replace("/", "_").ToUpper()}";
@@ -45,8 +46,9 @@ namespace Aliyun.ForwardURL
                 fcContext.Logger.LogInformation($"未配置订阅地址（{targetName}），请在环境变量中配置");
             }
 
-            fcContext.Logger.LogInformation("method = {0}; requestPath = {1}; QueryString = {2}", method, relativePath, request.QueryString);
-            fcContext.Logger.LogInformation("target = {0}", targetUrl);
+            //这里暂时不打印了
+            //fcContext.Logger.LogInformation("method = {0}; requestPath = {1}; QueryString = {2}", method, relativePath, request.QueryString);
+            //fcContext.Logger.LogInformation("target = {0}", targetUrl);
 
             StreamReader sr = new StreamReader(request.Body);
             string requestBody = sr.ReadToEnd();
@@ -69,14 +71,13 @@ namespace Aliyun.ForwardURL
 
                 if (!string.IsNullOrWhiteSpace(result))
                 {
-                    fcContext.Logger.LogInformation("存储");
                     //成功，保存
                     OSSManager.SaveConfig(targetName, result);
                 }
             }
             catch (System.Exception ex)
             {
-                fcContext.Logger.LogInformation("error = {0}", ex);
+                fcContext.Logger.LogInformation("请求源地址失败 = {0}", ex);
                 //失败，读取新的ret
                 var oldData = OSSManager.LoadConfig(targetName);
                 if (!string.IsNullOrWhiteSpace(oldData))
@@ -85,11 +86,13 @@ namespace Aliyun.ForwardURL
                 }
             }
 
-            //将获取到的订阅内容返回
-            fcContext.Logger.LogInformation("requestBody1 = {}", requestBody);
+            //这里暂时不打印了
+            //fcContext.Logger.LogInformation("requestBody1 = {}", requestBody);
+
+            fcContext.Logger.LogInformation($"URL内容尺寸{requestBody.Length}");
+
             response.StatusCode = 200;
             response.ContentType = "text/plain;charset=UTF-8";
-            //Console.WriteLine(ret);
 
             await response.WriteAsync(result, encoding: Encoding.UTF8);
             return response;

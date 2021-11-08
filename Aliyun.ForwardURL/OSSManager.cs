@@ -26,6 +26,7 @@ namespace Aliyun.ForwardURL
 
         public static string LoadConfig(string fileName)
         {
+            HttpHandler.FcContext.Logger.LogInformation($"读缓存{fileName}...");
             var objectName = fileName.Replace(@"/", "_");
             string ret = string.Empty;
             var client = new OssClient(_endpoint, _accessKeyId, _accessKeySecret);
@@ -46,15 +47,15 @@ namespace Aliyun.ForwardURL
             }
             catch (Exception ex)
             {
+                HttpHandler.FcContext.Logger.LogInformation("读取缓存失败, {0}", ex.Message);
             }
 
             return ret;
         }
 
-        //
         public static void SaveConfig(string fileName, string fileContent)
         {
-            HttpHandler.FcContext.Logger.LogInformation($"开始存储配置{fileName}...");
+            HttpHandler.FcContext.Logger.LogInformation($"写缓存{fileName}...");
             var objectName = fileName.Replace(@"/", "_");
 
             var client = new OssClient(_endpoint, _accessKeyId, _accessKeySecret);
@@ -67,7 +68,7 @@ namespace Aliyun.ForwardURL
             }
             catch (Exception ex)
             {
-                HttpHandler.FcContext.Logger.LogInformation("存储配置失败, {0}", ex.Message);
+                HttpHandler.FcContext.Logger.LogInformation("存储缓存失败, {0}", ex.Message);
             }
         }
     }
