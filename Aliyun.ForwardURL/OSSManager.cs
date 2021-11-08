@@ -47,7 +47,7 @@ namespace Aliyun.ForwardURL
             }
             catch (Exception ex)
             {
-                HttpHandler.FcContext.Logger.LogInformation("读取缓存失败, {0}", ex.Message);
+                HttpHandler.FcContext.Logger.LogInformation("读缓存失败, {0}", ex.Message);
             }
 
             return ret;
@@ -68,7 +68,7 @@ namespace Aliyun.ForwardURL
             }
             catch (Exception ex)
             {
-                HttpHandler.FcContext.Logger.LogInformation("存储缓存失败, {0}", ex.Message);
+                HttpHandler.FcContext.Logger.LogInformation("写缓存失败, {0}", ex.Message);
             }
         }
     }
