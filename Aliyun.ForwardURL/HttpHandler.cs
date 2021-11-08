@@ -89,7 +89,7 @@ namespace Aliyun.ForwardURL
             //这里暂时不打印了
             //fcContext.Logger.LogInformation("requestBody1 = {}", requestBody);
 
-            fcContext.Logger.LogInformation($"URL内容尺寸{requestBody.Length}");
+            fcContext.Logger.LogInformation($"返回URL内容尺寸{requestBody.Length}");
 
             response.StatusCode = 200;
             response.ContentType = "text/plain;charset=UTF-8";
