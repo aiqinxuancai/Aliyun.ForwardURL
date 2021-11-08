@@ -43,6 +43,7 @@ namespace Aliyun.ForwardURL
                 }
                 else
                 {
+                    HttpHandler.FcContext.Logger.LogInformation($"缓存文件{fileName}不存在}");
                 }
             }
             catch (Exception ex)
