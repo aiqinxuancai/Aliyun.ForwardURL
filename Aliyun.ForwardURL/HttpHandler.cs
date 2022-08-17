@@ -75,17 +75,19 @@ namespace Aliyun.ForwardURL
                     var base64bytes = Convert.FromBase64String(result);
                     var baseData = Encoding.UTF8.GetString(base64bytes);
 
-                    //TODO 验证数据
-                    var regex = new Regex("^ss(|r):", RegexOptions.Singleline | RegexOptions.Multiline);
-                    if (regex.Matches(baseData).Count > 1)
-                    {
-                        //成功，保存
-                        OSSManager.SaveConfig(targetName, result);
-                    }
-                    else
-                    {
-                        throw new Exception("格式验证失败");
-                    }
+                    ////TODO 验证数据
+                    //var regex = new Regex("^ss(|r):", RegexOptions.Singleline | RegexOptions.Multiline);
+                    //if (regex.Matches(baseData).Count > 1)
+                    //{
+                    //    //成功，保存
+                    //    OSSManager.SaveConfig(targetName, result);
+                    //}
+                    //else
+                    //{
+                    //    throw new Exception("格式验证失败");
+                    //}
+
+                    OSSManager.SaveConfig(targetName, result);
                 }
                 else
                 {
