@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Flurl.Http;
 using Flurl;
-
+using System.Text.RegularExpressions;
 
 namespace Aliyun.ForwardURL
 {
@@ -58,21 +58,34 @@ namespace Aliyun.ForwardURL
             try
             {
                 //fcContext.Logger.LogInformation("第一次请求");
-                var getResp = await targetUrl.WithTimeout(10).GetAsync(); ;
+                var getResp = await targetUrl.WithTimeout(10).GetAsync();
 
                 result = await getResp.Content.ReadAsStringAsync();
 	            if (getResp.IsSuccessStatusCode == false)
 	            {
                     //fcContext.Logger.LogInformation("第二次请求");
                     //获取订阅失败，重试一次
-                    getResp = await targetUrl.WithTimeout(10).GetAsync(); ;
+                    getResp = await targetUrl.WithTimeout(10).GetAsync();
                     result = await getResp.Content.ReadAsStringAsync();
 	            }
 
                 if (getResp.IsSuccessStatusCode && !string.IsNullOrWhiteSpace(result))
                 {
-                    //成功，保存
-                    OSSManager.SaveConfig(targetName, result);
+                    //如果非base64，可能失败
+                    var base64bytes = Convert.FromBase64String(result);
+                    var baseData = Encoding.UTF8.GetString(base64bytes);
+
+                    //TODO 验证数据
+                    var regex = new Regex("^ss(|r):", RegexOptions.Singleline | RegexOptions.Multiline);
+                    if (regex.Matches(baseData).Count > 1)
+                    {
+                        //成功，保存
+                        OSSManager.SaveConfig(targetName, result);
+                    }
+                    else
+                    {
+                        throw new Exception("格式验证失败");
+                    }
                 }
                 else
                 {
