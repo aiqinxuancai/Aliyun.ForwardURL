@@ -69,10 +69,14 @@ namespace Aliyun.ForwardURL
                     result = await getResp.Content.ReadAsStringAsync();
 	            }
 
-                if (!string.IsNullOrWhiteSpace(result))
+                if (getResp.IsSuccessStatusCode && !string.IsNullOrWhiteSpace(result))
                 {
                     //成功，保存
                     OSSManager.SaveConfig(targetName, result);
+                }
+                else
+                {
+                    getResp.EnsureSuccessStatusCode();
                 }
             }
             catch (System.Exception ex)
