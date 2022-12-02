@@ -61,8 +61,6 @@ Aliyun.ForwardURL::Aliyun.ForwardURL.HttpHandler::HandleRequest
 * REGEX_FORMAT_AT_BASE64_DECODE 填写正则表达式验证结果（先对结果进行base64解码）
 * VALIDATION_NOT_HTML 验证内容必须是非HTML代码，默认为false，可设置为true打开
 
-![](https://pic1.zhimg.com/80/v2-bb419f1937cd3f09d58df40b4ea4e438_720w.png)
-
 点击左侧【测试函数】，成功啦
 
 ![](https://pic2.zhimg.com/80/v2-a03960f98b3db988ac6cb6d100664bd1_720w.png)
