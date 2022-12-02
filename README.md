@@ -40,15 +40,9 @@
 
 名字可随你喜欢填写（用随机字符串可避免被穷举到地址）
 
-![](https://pic2.zhimg.com/80/v2-622ea4ea2d51ab08fde10d64b5623ed2_720w.png)
+![QQ截图20221202175708](https://user-images.githubusercontent.com/4475018/205267449-3df690da-1b41-4c06-8eec-b1a1ab66fa39.png)
 
-创建成功后编辑环境信息
-
-![](https://pic2.zhimg.com/80/v2-d938df443b0277729d666340c7a0c1ed_720w.png)
-
-![](https://pica.zhimg.com/80/v2-ece3b70d823aecf526cc7ed2ad9922b9_720w.png)
-
-![](https://pic2.zhimg.com/80/v2-746b6f880826ffddd913ce7fcc3f4d0f_720w.png)
+![QQ截图20221202175749](https://user-images.githubusercontent.com/4475018/205267463-93d19bfd-7fc5-4ff5-ac14-377ae2100158.png)
 
 函数入口填写为
 
@@ -56,11 +50,7 @@
 Aliyun.ForwardURL::Aliyun.ForwardURL.HttpHandler::HandleRequest
 ```
 
-接下来添加配置环境变量
-
-![](https://pic2.zhimg.com/80/v2-29b032b7d183240e3192feccdffc7756_720w.png)
-
-分别为
+订阅分别为
     
 * TARGET_URL 你的订阅地址
 * REGEX_FORMAT 填写正则表达式验证结果
