@@ -42,6 +42,10 @@
 
 ![QQ截图20221202175708](https://user-images.githubusercontent.com/4475018/205267449-3df690da-1b41-4c06-8eec-b1a1ab66fa39.png)
 
+代码包从github下载并上传
+
+[https://github.com/aiqinxuancai/Aliyun.ForwardURL/releases](https://github.com/aiqinxuancai/Aliyun.ForwardURL/releases)
+
 ![QQ截图20221202175749](https://user-images.githubusercontent.com/4475018/205267463-93d19bfd-7fc5-4ff5-ac14-377ae2100158.png)
 
 函数入口填写为
@@ -56,14 +60,6 @@ Aliyun.ForwardURL::Aliyun.ForwardURL.HttpHandler::HandleRequest
 * REGEX_FORMAT 填写正则表达式验证结果
 * REGEX_FORMAT_AT_BASE64_DECODE 填写正则表达式验证结果（先对结果进行base64解码）
 * VALIDATION_NOT_HTML 验证内容必须是非HTML代码，默认为false，可设置为true打开
-
-回到函数代码
-
-![](https://pic3.zhimg.com/80/v2-75880cbcfe637618a4eab3ceb6e6f9aa_720w.png)
-
-代码包从github下载并上传
-
-[https://github.com/aiqinxuancai/Aliyun.ForwardURL/releases](https://github.com/aiqinxuancai/Aliyun.ForwardURL/releases)
 
 ![](https://pic1.zhimg.com/80/v2-bb419f1937cd3f09d58df40b4ea4e438_720w.png)
 
