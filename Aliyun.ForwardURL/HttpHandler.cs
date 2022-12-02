@@ -32,18 +32,24 @@ namespace Aliyun.ForwardURL
             FcContext = fcContext;
 
             string targetName = "TARGET_URL";
-
+            string VALIDATION_FORMAT = Environment.GetEnvironmentVariable("VALIDATION_FORMAT");
+            string VALIDATION_NOT_HTML = Environment.GetEnvironmentVariable("VALIDATION_NOT_HTML"); 
 
             //这里支持使用在URL后增加/***/***的方法来配置多个URL，环境变量里只需配置对应的TARGET_URL_***_*** (使用CDN的话，似乎会导致relativePath无法获取)
             if (relativePath != "/" && !string.IsNullOrWhiteSpace(relativePath))
             {
                 targetName = $"TARGET_URL{relativePath.Replace("/", "_").ToUpper()}";
             }
+
             string targetUrl = Environment.GetEnvironmentVariable(targetName);
 
             if (string.IsNullOrWhiteSpace(targetUrl))
             {
                 fcContext.Logger.LogInformation($"未配置订阅地址（{targetName}），请在环境变量中配置");
+                response.StatusCode = 200;
+                response.ContentType = "text/plain;charset=UTF-8";
+                await response.WriteAsync("未配置地址", encoding: Encoding.UTF8);
+                return response;
             }
 
             //这里暂时不打印了
@@ -75,30 +81,49 @@ namespace Aliyun.ForwardURL
                     var base64bytes = Convert.FromBase64String(result);
                     var baseData = Encoding.UTF8.GetString(base64bytes);
 
-                    ////TODO 验证数据
-                    //var regex = new Regex("^ss(|r):", RegexOptions.Singleline | RegexOptions.Multiline);
-                    //if (regex.Matches(baseData).Count > 1)
-                    //{
-                    //    //成功，保存
-                    //    OSSManager.SaveConfig(targetName, result);
-                    //}
-                    //else
-                    //{
-                    //    throw new Exception("格式验证失败");
-                    //}
+                    //验证数据非网页数据
+                    if (VALIDATION_NOT_HTML == "true")
+                    {
+                        
+                        if (!result.Contains("<"))
+                        {
+                            //成功，保存
+                            CacheManager.SaveConfig(targetName, result);
+                        }
+                        else
+                        {
+                            throw new Exception("格式验证失败(是HTML内容，可能为报错页面)");
+                        }
+                    }
 
-                    OSSManager.SaveConfig(targetName, result);
+                    //验证数据
+                    if (VALIDATION_FORMAT == "true")
+                    {
+                        var regex = new Regex("^ss(|r):", RegexOptions.Singleline | RegexOptions.Multiline);
+                        if (regex.Matches(baseData).Count > 1)
+                        {
+                            //成功，保存
+                            CacheManager.SaveConfig(targetName, result);
+                        }
+                        else
+                        {
+                            throw new Exception("格式验证失败(解析后没有订阅内容)");
+                        }
+                    }
+
+
+                    CacheManager.SaveConfig(targetName, result);
                 }
                 else
                 {
                     getResp.EnsureSuccessStatusCode();
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 fcContext.Logger.LogInformation("请求源地址失败 = {0}", ex);
                 //失败，读取新的ret
-                var oldData = OSSManager.LoadConfig(targetName);
+                var oldData = CacheManager.LoadConfig(targetName);
                 if (!string.IsNullOrWhiteSpace(oldData))
                 {
                     result = oldData;

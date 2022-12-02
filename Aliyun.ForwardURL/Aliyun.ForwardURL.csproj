@@ -1,11 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aliyun.OSS.SDK.NetCore" Version="2.13.0" />
     <PackageReference Include="Aliyun.Serverless.Core" Version="1.0.1" />
     <PackageReference Include="Aliyun.Serverless.Core.Http" Version="1.0.2" />
     <PackageReference Include="Flurl.Http" Version="2.4.2" />
