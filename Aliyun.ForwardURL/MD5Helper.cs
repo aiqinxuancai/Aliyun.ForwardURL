@@ -4,7 +4,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace AliyunUrlGoto
+namespace Aliyun.ForwardURL
 {
     public class MD5Helper
     {

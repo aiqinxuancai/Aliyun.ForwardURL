@@ -54,14 +54,11 @@ namespace Aliyun.ForwardURL
             //获取订阅
             try
             {
-                //fcContext.Logger.LogInformation("第一次请求");
                 var getResp = await targetUrl.WithTimeout(10).GetAsync();
 
                 result = await getResp.Content.ReadAsStringAsync();
 	            if (getResp.IsSuccessStatusCode == false)
 	            {
-                    //fcContext.Logger.LogInformation("第二次请求");
-                    //获取订阅失败，重试一次
                     getResp = await targetUrl.WithTimeout(10).GetAsync();
                     result = await getResp.Content.ReadAsStringAsync();
 	            }
