@@ -60,22 +60,12 @@ Aliyun.ForwardURL::Aliyun.ForwardURL.HttpHandler::HandleRequest
 
 ![](https://pic2.zhimg.com/80/v2-29b032b7d183240e3192feccdffc7756_720w.png)
 
-  
-
-![](https://pic4.zhimg.com/v2-71e18ab1ab28afb27f9e628ae94e3697_b.png)
-
 分别为
-
-1.  COS_ACCESSID （AccessId，上面的步骤有获取方法）
     
-2.  COS_ACCESSSECRET（AccessSecret，上面的步骤有获取方法）
-    
-3.  COS_BUCKETNAME （对象存储Bucket名称）
-    
-4.  COS_ENDPOINT （对象存储Bucket的Endpoint，前面拼上https:// ，例：[https://oss-cn-hangzhou.aliyuncs.com](https://oss-cn-hangzhou.aliyuncs.com/)）
-    
-5.  TARGET_URL （你的订阅地址）
-    
+* TARGET_URL 你的订阅地址
+* REGEX_FORMAT 填写正则表达式验证结果
+* REGEX_FORMAT_AT_BASE64_DECODE 填写正则表达式验证结果（先对结果进行base64解码）
+* VALIDATION_NOT_HTML 验证内容必须是非HTML代码，默认为false，可设置为true打开
 
 回到函数代码
 
