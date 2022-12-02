@@ -30,7 +30,7 @@ jobs:
       - name: Publish
         run:  dotnet publish -c Release
       - name: Compress
-        run: powershell Compress-7Zip $env:GITHUB_WORKSPACE\Aliyun.ForwardURL\bin\Release\netcoreapp2.1\publish -ArchiveFileName "Aliyun.ForwardURL.zip" -Format Zip
+        run: powershell Compress-7Zip $env:GITHUB_WORKSPACE\Aliyun.ForwardURL\bin\Release\netcoreapp3.1\publish -ArchiveFileName "Aliyun.ForwardURL.zip" -Format Zip
       - name: Create a Release
         uses: ncipollo/release-action@v1
         with:
