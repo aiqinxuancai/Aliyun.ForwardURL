@@ -54,7 +54,7 @@ Aliyun.ForwardURL::Aliyun.ForwardURL.HttpHandler::HandleRequest
 
 订阅分别为
     
-* TARGET_URL [必填]你的订阅地址
+* **TARGET_URL** [必填]你的订阅地址
 * REGEX_FORMAT [可选]填写正则表达式验证结果
 * REGEX_FORMAT_AT_BASE64_DECODE [可选]填写正则表达式验证结果（先对结果进行base64解码）
 * VALIDATION_NOT_HTML [可选]验证内容必须是非HTML代码，默认为false，可设置为true打开
