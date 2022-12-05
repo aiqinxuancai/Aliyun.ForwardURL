@@ -46,13 +46,13 @@
 
 ![QQ截图20221202175749](https://user-images.githubusercontent.com/4475018/205267463-93d19bfd-7fc5-4ff5-ac14-377ae2100158.png)
 
-函数入口填写为
+函数入口填写为：
 
 ```
 Aliyun.ForwardURL::Aliyun.ForwardURL.HttpHandler::HandleRequest
 ```
 
-订阅分别为
+环境变量：
     
 * **TARGET_URL** [必填]你的订阅地址
 * REGEX_FORMAT [可选]填写正则表达式验证结果
