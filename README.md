@@ -24,16 +24,14 @@
 
 注意上方选择地域和OSS为同一个地区。
 
-名称可随你喜欢填写，日志开启后会有多余的费用，建议禁用。
+名称任意，**日志开启后会有多余的费用**，建议禁用。
 
 ![](https://pica.zhimg.com/80/v2-305618b73863c82e760f06eacd233a29_720w.png)
 
 创建成功后，进入服务**配置**挂载OSS，路径为/home/app
 ![image](https://user-images.githubusercontent.com/4475018/205268634-c0b15df2-4ad0-4c27-af6f-541d211a50b2.png)
 
-进入刚才创建的服务点击【创建函数】
-
-名字可随你喜欢填写（用随机字符串可避免被穷举到地址）
+进入刚才创建的服务点击【创建函数】，名字任意
 
 ![QQ截图20221202175708](https://user-images.githubusercontent.com/4475018/205267449-3df690da-1b41-4c06-8eec-b1a1ab66fa39.png)
 
