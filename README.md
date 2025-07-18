@@ -45,6 +45,6 @@ Aliyun.ForwardURL::Aliyun.ForwardURL.HttpHandler::PocoHandler
 ![](https://pic1.zhimg.com/80/v2-6a1ee5e18a1a1d18c5f97a1754491324_720w.png)
 
 
-创建完毕后进到高级设置里，填写对象存储挂在**（可选，不需要缓存可跳过）**
+创建完毕后进到高级设置里，填写对象存储挂载 **（可选，不需要缓存可跳过）**
 
 <img width="813" height="596" alt="image" src="https://github.com/user-attachments/assets/3ad8cdc2-9f91-4b1b-af44-1baf77ba1f34" />
