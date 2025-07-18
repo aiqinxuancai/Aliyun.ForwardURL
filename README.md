@@ -39,6 +39,6 @@ Aliyun.ForwardURL::Aliyun.ForwardURL.HttpHandler::PocoHandler
 
 登录到阿里云后，访问 [对象存储的控制台](https://oss.console.aliyun.com/bucket)，创建一个Bucket，任意Bucket名、地域请和函数一致。
 
-创建完毕后进到高级设置里，填写对象存储挂载 **（可选，不需要缓存可跳过）**
+创建完毕后进到对应函数的高级设置，填写对象存储挂载 **（可选，不需要缓存可跳过）**
 
 <img width="813" height="596" alt="image" src="https://github.com/user-attachments/assets/3ad8cdc2-9f91-4b1b-af44-1baf77ba1f34" />
