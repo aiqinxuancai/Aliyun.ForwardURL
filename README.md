@@ -10,7 +10,7 @@
 
 **函数创建**
 
-访问[函数计算控制台]([https://oss.console.aliyun.com/bucket](https://fcnext.console.aliyun.com/cn-shanghai/services))
+访问 [函数计算控制台](https://fcnext.console.aliyun.com/cn-hongkong/)
 
 地域（建议香港）
 <img width="788" height="453" alt="image" src="https://github.com/user-attachments/assets/a6ab96bf-7cd4-4bad-83f1-41963f5eb866" />
@@ -37,13 +37,7 @@ Aliyun.ForwardURL::Aliyun.ForwardURL.HttpHandler::PocoHandler
 
 **对象存储创建（可选，不需要缓存可跳过）**
 
-登录到阿里云后，访问[OSS的控制台](https://oss.console.aliyun.com/bucket)
-
-点击【创建Bucket】
-
-输入任意Bucket名、地域（建议香港）请和后面创建的函数计算一致。
-![](https://pic1.zhimg.com/80/v2-6a1ee5e18a1a1d18c5f97a1754491324_720w.png)
-
+登录到阿里云后，访问 [对象存储的控制台](https://oss.console.aliyun.com/bucket)，创建一个Bucket，任意Bucket名、地域请和函数一致。
 
 创建完毕后进到高级设置里，填写对象存储挂载 **（可选，不需要缓存可跳过）**
 
