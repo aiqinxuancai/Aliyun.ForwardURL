@@ -49,7 +49,7 @@
 函数入口填写为：
 
 ```
-Aliyun.ForwardURL::Aliyun.ForwardURL.HttpHandler::HandleRequest
+Aliyun.ForwardURL::Aliyun.ForwardURL.HttpHandler::PocoHandler
 ```
 
 环境变量：
