@@ -4,143 +4,139 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;
-using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Flurl.Http;
-using Flurl;
 using System.Text.RegularExpressions;
+using Polly; 
 
 namespace Aliyun.ForwardURL
 {
     public class HttpHandler : FcHttpEntrypoint
     {
+        // 配置在类级别加载一次
+        private static readonly string TargetUrl = Environment.GetEnvironmentVariable("TARGET_URL");
+        private static readonly string RegexFormat = Environment.GetEnvironmentVariable("REGEX_FORMAT");
+        private static readonly string RegexFormatAtBase64Decode = Environment.GetEnvironmentVariable("REGEX_FORMAT_AT_BASE64_DECODE");
+        private static readonly bool IsValidationNotHtmlEnabled = "true".Equals(Environment.GetEnvironmentVariable("VALIDATION_NOT_HTML"), StringComparison.OrdinalIgnoreCase);
 
-        public static IFcContext FcContext { set; get; }
+        // 定义重试策略：重试2次，每次间隔1秒
+        private static readonly IAsyncPolicy<IFlurlResponse> RetryPolicy = Policy
+            .Handle<FlurlHttpException>() // 只针对网络等异常重试
+            .OrResult<IFlurlResponse>(r => !r.ResponseMessage.IsSuccessStatusCode) // 或非成功状态码
+            .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(retryAttempt));
 
         protected override void Init(IWebHostBuilder builder)
         {
-
         }
 
-        
-        //用于中转代理的订阅
         public override async Task<HttpResponse> HandleRequest(HttpRequest request, HttpResponse response, IFcContext fcContext)
         {
-            string method = request.Method;
-            string relativePath = request.Path.Value;
-            FcContext = fcContext;
-
-            string REGEX_FORMAT = Environment.GetEnvironmentVariable("REGEX_FORMAT");
-            string REGEX_FORMAT_AT_BASE64_DECODE = Environment.GetEnvironmentVariable("REGEX_FORMAT_AT_BASE64_DECODE");
-            string VALIDATION_NOT_HTML = Environment.GetEnvironmentVariable("VALIDATION_NOT_HTML"); 
-
-
-            string targetUrl = Environment.GetEnvironmentVariable("TARGET_URL");
-
-            if (string.IsNullOrWhiteSpace(targetUrl))
+            if (string.IsNullOrWhiteSpace(TargetUrl))
             {
-                fcContext.Logger.LogInformation($"未配置订阅地址TARGET_URL，请在环境变量中配置");
-                response.StatusCode = 200;
+                fcContext.Logger.LogWarning("Environment variable 'TARGET_URL' is not configured.");
+                response.StatusCode = 500; // 使用 500 Internal Server Error 更合适
                 response.ContentType = "text/plain;charset=UTF-8";
-                await response.WriteAsync("未配置地址", encoding: Encoding.UTF8);
+                await response.WriteAsync("服务端错误：未配置目标地址", encoding: Encoding.UTF8);
                 return response;
             }
 
-            StreamReader sr = new StreamReader(request.Body);
-            string requestBody = sr.ReadToEnd();
-
-            string result = string.Empty;
-            //获取订阅
+            string result;
             try
             {
-                var getResp = await targetUrl.WithTimeout(10).GetAsync();
+                // 使用 Polly 执行带有重试策略的请求
+                var flurlResponse = await RetryPolicy.ExecuteAsync(() =>
+                    TargetUrl.WithTimeout(10).GetAsync());
 
-                result = await getResp.Content.ReadAsStringAsync();
-	            if (getResp.IsSuccessStatusCode == false)
-	            {
-                    getResp = await targetUrl.WithTimeout(10).GetAsync();
-                    result = await getResp.Content.ReadAsStringAsync();
-	            }
+                string newContent = await flurlResponse.GetStringAsync();
 
-                if (getResp.IsSuccessStatusCode && !string.IsNullOrWhiteSpace(result))
-                {
-                    //如果非base64，可能失败
-                    var base64bytes = Convert.FromBase64String(result);
-                    var base64Data = Encoding.UTF8.GetString(base64bytes);
+                // 执行所有验证
+                ValidateContent(newContent, fcContext.Logger);
 
-                    //验证数据非网页数据
-                    if (VALIDATION_NOT_HTML == "true")
-                    {
-                        if (!result.Contains("<html>"))
-                        {
-                            //成功，保存
-                            CacheManager.SaveConfig(targetUrl, result);
-                        }
-                        else
-                        {
-                            throw new Exception("格式验证失败(是HTML内容)");
-                        }
-                    }
-
-                    //验证数据
-                    if (!string.IsNullOrEmpty(REGEX_FORMAT))
-                    {
-                        var regex = new Regex(REGEX_FORMAT, RegexOptions.Singleline | RegexOptions.Multiline);
-                        if (regex.Matches(result).Count > 1)
-                        {
-                            //成功，保存
-                            CacheManager.SaveConfig(targetUrl, result);
-                        }
-                        else
-                        {
-                            throw new Exception("格式验证失败(原文)");
-                        }
-                    }
-
-                    //验证base64数据
-                    if (!string.IsNullOrEmpty(REGEX_FORMAT_AT_BASE64_DECODE))
-                    {
-                        var regex = new Regex(REGEX_FORMAT_AT_BASE64_DECODE, RegexOptions.Singleline | RegexOptions.Multiline); // "^ss(|r):"
-                        if (regex.Matches(base64Data).Count > 1)
-                        {
-                            //成功，保存
-                            CacheManager.SaveConfig(targetUrl, result);
-                        }
-                        else
-                        {
-                            throw new Exception("格式验证失败(BASE64解码后)");
-                        }
-                    }
-
-                    CacheManager.SaveConfig(targetUrl, result);
-                }
-                else
-                {
-                    getResp.EnsureSuccessStatusCode();
-                }
+                // 所有验证通过，保存并使用新内容
+                CacheManager.SaveConfig(TargetUrl, newContent);
+                result = newContent;
+                fcContext.Logger.LogInformation($"Successfully fetched and validated new content from {TargetUrl}.");
             }
             catch (Exception ex)
             {
-                fcContext.Logger.LogInformation("请求源地址失败 = {0}", ex);
-                //失败，读取新的ret
-                var oldData = CacheManager.LoadConfig(targetUrl);
-                if (!string.IsNullOrWhiteSpace(oldData))
+                // 包括请求失败、重试耗尽、验证失败等所有异常
+                fcContext.Logger.LogError(ex, $"Failed to fetch or validate content from {TargetUrl}. Attempting to use cached data.");
+
+                var cachedData = CacheManager.LoadConfig(TargetUrl);
+                if (!string.IsNullOrWhiteSpace(cachedData))
                 {
-                    result = oldData;
+                    result = cachedData;
+                    fcContext.Logger.LogInformation("Successfully loaded content from cache.");
+                }
+                else
+                {
+                    // 如果连缓存都没有，则必须返回错误
+                    fcContext.Logger.LogError("No cached data available. Returning error to client.");
+                    response.StatusCode = 502; // Bad Gateway，表示代理无法从上游获取有效响应
+                    response.ContentType = "text/plain;charset=UTF-8";
+                    await response.WriteAsync("服务暂时不可用，请稍后重试", encoding: Encoding.UTF8);
+                    return response;
                 }
             }
 
-            //这里暂时不打印了
-            //fcContext.Logger.LogInformation("requestBody1 = {}", requestBody);
-
-            fcContext.Logger.LogInformation($"返回URL内容尺寸{requestBody.Length}");
+            fcContext.Logger.LogInformation($"Responding with content of size: {result.Length}");
 
             response.StatusCode = 200;
+            // 考虑从目标响应头获取 Content-Type，这里暂时保持原样
             response.ContentType = "text/plain;charset=UTF-8";
-
             await response.WriteAsync(result, encoding: Encoding.UTF8);
             return response;
+        }
+
+        private void ValidateContent(string content, ILogger logger)
+        {
+            if (string.IsNullOrWhiteSpace(content))
+            {
+                throw new Exception("Validation failed: Content is empty.");
+            }
+
+            // 1. HTML 内容验证
+            if (IsValidationNotHtmlEnabled && content.Contains("<html>"))
+            {
+                throw new Exception("Validation failed: Content appears to be an HTML document.");
+            }
+
+            // 2. 原文正则验证
+            if (!string.IsNullOrEmpty(RegexFormat))
+            {
+                var regex = new Regex(RegexFormat, RegexOptions.Singleline | RegexOptions.Multiline);
+                if (regex.Matches(content).Count <= 1)
+                {
+                    throw new Exception("Validation failed: Raw content does not match REGEX_FORMAT.");
+                }
+            }
+
+            // 3. Base64 解码后验证
+            if (!string.IsNullOrEmpty(RegexFormatAtBase64Decode))
+            {
+                string decodedContent;
+                try
+                {
+                    var base64Bytes = Convert.FromBase64String(content);
+                    decodedContent = Encoding.UTF8.GetString(base64Bytes);
+                }
+                catch (FormatException ex)
+                {
+                    logger.LogWarning(ex, "Content is not a valid Base64 string, skipping REGEX_FORMAT_AT_BASE64_DECODE validation.");
+                    // 根据需求，这里可以选择 return（跳过验证）或 throw（视为验证失败）
+                    // 此处选择直接抛出，因为配置要求了对Base64解码后内容的验证
+                    throw new Exception("Validation failed: Content is not a valid Base64 string.", ex);
+                }
+
+                var regex = new Regex(RegexFormatAtBase64Decode, RegexOptions.Singleline | RegexOptions.Multiline);
+                if (regex.Matches(decodedContent).Count <= 1)
+                {
+                    throw new Exception("Validation failed: Base64-decoded content does not match REGEX_FORMAT_AT_BASE64_DECODE.");
+                }
+            }
+
+            logger.LogInformation("Content validation successful.");
         }
     }
 }
